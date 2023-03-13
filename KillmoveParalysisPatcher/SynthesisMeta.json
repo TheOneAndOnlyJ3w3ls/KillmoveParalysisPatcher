@@ -1,0 +1,8 @@
+{
+  "Nickname": "KillmoveParalysisPatcher",
+  "Visibility": "Visible",
+  "OneLineDescription": "Prevent NPCs or creatures from getting paralyzed in the middle of killmoves",
+  "LongDescription": "This patcher prevents  NPCs or creatures from getting paralyzed in the middle of killmoves.",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": []
+}
