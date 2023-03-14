@@ -25,7 +25,6 @@ namespace KillmoveParalysisPatcher
                 .Run(args);
         }
         
-
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             System.Console.WriteLine("Starting search for paralysis magic effects!");
@@ -58,16 +57,41 @@ namespace KillmoveParalysisPatcher
                     magicEffectGetter.Archetype.Type == MagicEffectArchetype.TypeEnum.Paralysis))
                 {
                     var mgef = state.PatchMod.MagicEffects.GetOrAddAsOverride(magicEffectGetter);
-                    mgef.Conditions.Add(hasItemCondition);
-                    continue;
+
+                    // Fix the edge case with the last condition being OR
+                    if (mgef.Conditions.Count > 0 && mgef.Conditions.Last().Flags.HasFlag(Condition.Flag.OR))
+                    {
+                        System.Console.WriteLine("condition found with OR");
+                        // Add the condition at the beginning
+                        mgef.Conditions.Insert(0, hasItemCondition);
+                        //mgef.Conditions!.Last().Flags.SetFlag(Condition.Flag.OR, false);
+                    }
+                    else
+                    {
+                        // Add the condition
+                        mgef.Conditions.Add(hasItemCondition);
+                    }
                 }
 
                 // Stagger Archetype
-                if (Settings.PreventKillmoveStagger &&
+                else if (Settings.PreventKillmoveStagger &&
                     magicEffectGetter.Archetype.Type == MagicEffectArchetype.TypeEnum.Stagger)
                 {
                     var mgef = state.PatchMod.MagicEffects.GetOrAddAsOverride(magicEffectGetter);
-                    mgef.Conditions.Add(hasItemCondition);
+
+                    // Fix the edge case with the last condition being OR
+                    if (mgef.Conditions.Count > 0 && mgef.Conditions.Last().Flags.HasFlag(Condition.Flag.OR))
+                    {
+                        // Add the condition at the beginning
+                        mgef.Conditions.Insert(0, hasItemCondition);
+                        // mgef.Conditions.Last().Flags.SetFlag(Condition.Flag.OR, false);
+                    }
+                    else
+                    {
+                        // Add the condition at the end
+                        mgef.Conditions.Add(hasItemCondition);
+                    }
+
                 }
             }
         }
