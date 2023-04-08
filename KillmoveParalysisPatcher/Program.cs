@@ -29,18 +29,12 @@ namespace KillmoveParalysisPatcher
         {
             System.Console.WriteLine("Starting search for paralysis magic effects!");
 
-            // Create the condition data
-            FunctionConditionData functionCondition = new()
-            {
-                Function = Condition.Function.GetPairedAnimation
-            };
-
             // Create the ConditionFloat item
             ConditionFloat hasItemCondition = new()
             {
                 CompareOperator = CompareOperator.EqualTo,
                 ComparisonValue = 0,
-                Data = functionCondition,
+                Data = new GetPairedAnimationConditionData(),
             };
 
             // Iterate on all magic effects
