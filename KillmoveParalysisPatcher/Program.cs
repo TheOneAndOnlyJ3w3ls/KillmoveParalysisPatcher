@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
@@ -7,7 +6,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.FormKeys.SkyrimSE;
 using System.Threading.Tasks;
 using Noggog;
-using System.Text.RegularExpressions;
 
 namespace KillmoveParalysisPatcher
 {
@@ -51,14 +49,19 @@ namespace KillmoveParalysisPatcher
                     magicEffectGetter.Archetype.Type == MagicEffectArchetype.TypeEnum.Paralysis))
                 {
                     var mgef = state.PatchMod.MagicEffects.GetOrAddAsOverride(magicEffectGetter);
+                    if (mgef is null) continue;
+
+                    if(Settings.Debug)
+                        System.Console.WriteLine("Found magic effect: " + magicEffectGetter.FormKey);
 
                     // Fix the edge case with the last condition being OR
                     if (mgef.Conditions.Count > 0 && mgef.Conditions.Last().Flags.HasFlag(Condition.Flag.OR))
                     {
-                        System.Console.WriteLine("condition found with OR");
+                        if(Settings.Debug)
+                            System.Console.WriteLine("Found condition with OR, adding the condition at the top instead");
+
                         // Add the condition at the beginning
                         mgef.Conditions.Insert(0, hasItemCondition);
-                        //mgef.Conditions!.Last().Flags.SetFlag(Condition.Flag.OR, false);
                     }
                     else
                     {
